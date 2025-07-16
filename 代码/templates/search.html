@@ -1,0 +1,471 @@
+<!-- templates/search.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>校内站内搜索引擎</title>
+  <style>
+    /* 全局重置与基础样式 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif;
+      background-color: #f8f9fa;
+      color: #202124;
+      line-height: 1.6;
+    }
+    a {
+      color: #1a0dab;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    /* 最外层容器，居中并限制最大宽度 */
+    .container {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px 0;
+    }
+
+    /* 顶部导航区：Logo、登录状态 */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .logo {
+      font-size: 32px;
+      font-weight: bold;
+      color: #1a73e8;
+    }
+    .user-info {
+      font-size: 14px;
+      color: #5f6368;
+    }
+    .user-info a {
+      margin-left: 10px;
+      color: #1a73e8;
+    }
+
+    /* 搜索框区域 */
+    .search-area {
+      text-align: center;
+      margin-bottom: 30px;
+      position: relative; /* 使下拉定位相对于此容器 */
+    }
+    .search-type {
+      text-align: left;
+      display: inline-block;
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: #5f6368;
+    }
+    .search-type label {
+      margin-right: 20px;
+      cursor: pointer;
+    }
+    .search-type input[type="radio"] {
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+    .search-box {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+      max-width: 600px;
+    }
+    .search-box input[type="text"] {
+      width: 100%;
+      padding: 10px 50px 10px 20px;
+      font-size: 18px;
+      border: 1px solid #dadce0;
+      border-radius: 24px;
+      background-color: #fff;
+      outline: none;
+      transition: box-shadow .2s, border-color .2s;
+    }
+    .search-box input[type="text"]:focus {
+      border-color: #1a73e8;
+      box-shadow: 0 1px 6px rgba(32,33,36,0.28);
+    }
+    .search-box button {
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+      color: #5f6368;
+    }
+    .search-box button:hover {
+      color: #202124;
+    }
+    .search-box button:focus {
+      outline: none;
+    }
+    .search-box button .icon {
+      font-family: Arial, sans-serif;
+      display: block;
+    }
+    .placeholder-note {
+      margin-top: 5px;
+      font-size: 13px;
+      color: #666;
+      text-align: left;
+    }
+
+    /* 下拉联想列表 */
+    #suggest-list {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 600px;
+      background-color: #fff;
+      border: 1px solid #dadce0;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 2px 6px rgba(60,64,67,0.15);
+      list-style: none;
+      z-index: 1000;
+      display: none; /* 默认隐藏，输入时显示 */
+    }
+    #suggest-list li {
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 15px;
+      color: #3c4043;
+    }
+    #suggest-list li:hover,
+    #suggest-list li.active {
+      background-color: #f1f3f4;
+    }
+
+    /* 历史搜索 */
+    .history {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #5f6368;
+      text-align: left;
+    }
+    .hist-item {
+      margin-right: 10px;
+      cursor: pointer;
+      color: #1a73e8;
+    }
+    .hist-item:hover {
+      text-decoration: underline;
+    }
+
+    /* 搜索结果信息栏 */
+    .results-info {
+      margin-bottom: 15px;
+      font-size: 14px;
+      color: #5f6368;
+    }
+
+    /* 搜索结果列表 */
+    .results-list {
+      list-style: none;
+    }
+    .result-item {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      box-shadow: 0 1px 3px rgba(60,64,67,0.15), 0 4px 8px rgba(60,64,67,0.1);
+      transition: box-shadow .2s;
+    }
+    .result-item:hover {
+      box-shadow: 0 4px 12px rgba(60,64,67,0.3), 0 12px 24px rgba(60,64,67,0.2);
+    }
+    .result-title {
+      font-size: 20px;
+      font-weight: normal;
+      margin-bottom: 5px;
+      color: #1a0dab;
+      display: inline-block;
+    }
+    .result-url {
+      font-size: 14px;
+      color: #006621;
+      margin-bottom: 10px;
+      word-break: break-all;
+      display: block;
+    }
+    .result-snippet {
+      font-size: 15px;
+      color: #3c4043;
+      margin-bottom: 10px;
+    }
+    .result-snippet strong {
+      background-color: #fff8b3;
+      font-weight: bold;
+    }
+    .snapshot-link {
+      font-size: 13px;
+      color: #5f6368;
+    }
+    .snapshot-link:hover {
+      color: #202124;
+    }
+
+    /* 分页栏 */
+    .pagination {
+      text-align: center;
+      margin: 30px 0;
+    }
+    .pagination a {
+      margin: 0 5px;
+      padding: 6px 12px;
+      font-size: 14px;
+      color: #1a0dab;
+      text-decoration: none;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      transition: background-color .2s, border-color .2s;
+    }
+    .pagination a:hover {
+      background-color: #f1f3f4;
+      border-color: #dadce0;
+    }
+    .pagination a.current {
+      font-weight: bold;
+      border-color: #dadce0;
+      background-color: #e8f0fe;
+      color: #1967d2;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 顶部导航：Logo + 登录/注册/欢迎/登出 -->
+    <div class="nav">
+      <div class="logo">校内搜索</div>
+      <div class="user-info">
+        {% if username %}
+          欢迎，{{ username }}
+          <a href="{{ url_for('logout') }}">登出</a>
+        {% else %}
+          <a href="{{ url_for('login') }}">登录</a> /
+          <a href="{{ url_for('register') }}">注册</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- 搜索区域 -->
+    <div class="search-area">
+      <div class="search-type">
+        <label><input type="radio" name="search_type" value="normal" checked> 普通检索</label>
+        <label><input type="radio" name="search_type" value="phrase"> 短语检索</label>
+        <label><input type="radio" name="search_type" value="wildcard"> 通配检索</label>
+        <label><input type="radio" name="search_type" value="document"> 文档检索</label>
+      </div>
+
+      <div class="search-box">
+        <form id="search-form" method="post" action="{{ url_for('search_page') }}">
+          <button type="submit"><span class="icon">🔍</span></button>
+          <input type="text" id="search-input" name="q"
+                 placeholder="在校内搜索..." autocomplete="off"
+                 value="{{ query|e }}" autocomplete="off">
+        </form>
+        <div class="placeholder-note" id="placeholder-note">
+          直接输入关键词，支持中文或英文。
+        </div>
+
+        <!-- 联想下拉列表 -->
+        <ul id="suggest-list"></ul>
+      </div>
+
+      <!-- 历史搜索 -->
+      <div class="history">
+        <strong>历史搜索：</strong>
+        <span id="history-list">加载中...</span>
+      </div>
+    </div>
+
+    <!-- 搜索结果信息 -->
+    {% if results %}
+      <div class="results-info">
+        约 {{ results|length }} 条结果，用时 0.12 秒
+      </div>
+    {% endif %}
+
+    <!-- 搜索结果列表 -->
+    <ul class="results-list">
+      {% for item in results %}
+        <li class="result-item">
+          {% if item.type == "document" %}
+            <span style="color: #d14; font-weight: bold; margin-right: 6px;">【文档】</span>
+          {% endif %}
+          <a href="#" onclick="recordClick('{{ item.doc_id }}', '{{ item.url }}')" class="result-title">{{ item.title }}</a>
+          <div class="result-url">{{ item.url }}</div>
+          <div class="result-snippet">{{ item.snippet|safe }}</div>
+          {% if item.type == "html" and item.snapshot %}
+            <div><a href="{{ url_for('view_snapshot', path=item.snapshot) }}" target="_blank" class="snapshot-link">查看快照</a></div>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <script>
+    // Debounce 工具：连续输入时，只在停止输入 300ms 后触发回调
+    function debounce(func, wait) {
+      let timeout;
+      return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      // 1. 加载历史搜索
+      fetch("/history")
+        .then(response => response.json())
+        .then(data => {
+          const container = document.getElementById("history-list");
+          if (!data || data.length === 0) {
+            container.textContent = "暂无历史";
+          } else {
+            container.innerHTML = data.map(q =>
+              `<span class="hist-item" onclick="fillQuery('${q}')">${q}</span>`
+            ).join("");
+          }
+        });
+
+      // 2. 绑定“检索类型”按钮以动态更换 placeholder
+      document.getElementsByName("search_type").forEach(radio => {
+        radio.addEventListener("change", updatePlaceholder);
+      });
+      updatePlaceholder();
+
+      // 3. 绑定联想：在 input 事件时调用 debounce 包裹的 suggestHandler
+      const inputField = document.getElementById("search-input");
+      inputField.addEventListener("input", debounce(suggestHandler, 300));
+
+      // 4. 隐藏联想结果时，如果点击 input 以外区域
+      document.addEventListener("click", function(e) {
+        const suggestList = document.getElementById("suggest-list");
+        if (!e.target.closest(".search-box")) {
+          suggestList.style.display = "none";
+        }
+      });
+    });
+
+    function updatePlaceholder() {
+      const placeholderNote = document.getElementById("placeholder-note");
+      const searchInput = document.getElementById("search-input");
+      const selected = document.querySelector('input[name="search_type"]:checked').value;
+      switch (selected) {
+        case "normal":
+          searchInput.placeholder = "在校内搜索...";
+          placeholderNote.textContent = "直接输入关键词，支持中文或英文。";
+          break;
+        case "phrase":
+          searchInput.placeholder = "输入要精确匹配的短语（如：南开 大学）";
+          placeholderNote.textContent = "短语检索会对输入内容做整体匹配，后台自动加双引号。";
+          break;
+        case "wildcard":
+          searchInput.placeholder = "输入含通配符的模式（* 或 ?，如：计*器）";
+          placeholderNote.textContent = "通配检索支持 * 表示任意多个字符、? 表示单个字符。";
+          break;
+        case "document":
+          searchInput.placeholder = "仅在文档标题中检索（输入关键词）";
+          placeholderNote.textContent = "文档检索只匹配文档标题，后台自动加前缀 type:document。";
+          break;
+      }
+    }
+
+    // 建议处理函数：向后端 /suggest 发送请求并渲染下拉列表
+    function suggestHandler(evt) {
+      const prefix = evt.target.value.trim();
+      const suggestList = document.getElementById("suggest-list");
+      if (!prefix) {
+        suggestList.style.display = "none";
+        return;
+      }
+      fetch("/suggest?prefix=" + encodeURIComponent(prefix))
+        .then(res => res.json())
+        .then(data => {
+          if (!data || data.length === 0) {
+            suggestList.style.display = "none";
+            return;
+          }
+          // 清空旧内容
+          suggestList.innerHTML = "";
+          data.forEach((term, idx) => {
+            const li = document.createElement("li");
+            li.textContent = term;
+            li.dataset.index = idx;
+            // 点击候选词时，将词填入输入框并提交表单
+            li.addEventListener("click", function() {
+              document.getElementById("search-input").value = term;
+              document.getElementById("search-form").submit();
+            });
+            suggestList.appendChild(li);
+          });
+          suggestList.style.display = "block";
+        })
+        .catch(() => {
+          suggestList.style.display = "none";
+        });
+    }
+
+    // 历史搜索回填
+    function fillQuery(q) {
+      document.getElementById("search-input").value = q;
+      document.getElementById("search-form").submit();
+    }
+
+    // 记录点击日志并跳转
+    function recordClick(docId, url) {
+      fetch("/click", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ doc_id: docId })
+      }).finally(() => {
+        window.open(url, "_blank");
+      });
+    }
+
+    // 表单提交前包装 query
+    document.getElementById("search-form").addEventListener("submit", function(evt) {
+      const selected = document.querySelector('input[name="search_type"]:checked').value;
+      const inputField = document.getElementById("search-input");
+      let q = inputField.value.trim();
+      if (!q) return;
+
+      switch (selected) {
+        case "phrase":
+          q = '"' + q.replace(/^"(.*)"$/, "$1") + '"';
+          break;
+        case "document":
+          q = "type:document " + q;
+          break;
+        case "wildcard":
+          // 保留用户输入的通配符
+          break;
+        case "normal":
+        default:
+          // 无需包装
+          break;
+      }
+      inputField.value = q;
+    });
+  </script>
+</body>
+</html>
+
+
+

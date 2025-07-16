@@ -1,0 +1,48 @@
+{
+  "sites": [
+    {
+      "start_url": "https://tas.nankai.edu.cn/",
+      "domain_whitelist": ["tas.nankai.edu.cn"]
+    },
+    {
+      "start_url": "https://medical.nankai.edu.cn/",
+      "domain_whitelist": ["medical.nankai.edu.cn"]
+    },
+    {
+      "start_url": "https://news.nankai.edu.cn/",
+      "domain_whitelist": ["news.nankai.edu.cn"]
+    },
+    {
+      "start_url": "https://sfs.nankai.edu.cn/",
+      "domain_whitelist": ["sfs.nankai.edu.cn"]
+    },
+    {
+      "start_url": "https://finance.nankai.edu.cn/",
+      "domain_whitelist": ["finance.nankai.edu.cn"]
+    },
+    {
+      "start_url": "https://physics.nankai.edu.cn/",
+      "domain_whitelist": ["physics.nankai.edu.cn"]
+    },
+    {
+      "start_url": "https://xs.nankai.edu.cn/",
+      "domain_whitelist": ["xs.nankai.edu.cn"]
+    },
+    {
+      "start_url": "https://env.nankai.edu.cn/",
+      "domain_whitelist": ["env.nankai.edu.cn"]
+    },
+    {
+      "start_url": "https://cz.nankai.edu.cn/",
+      "domain_whitelist": ["cz.nankai.edu.cn"]
+    },
+    {
+      "start_url": "https://bs.nankai.edu.cn/",
+      "domain_whitelist": ["bs.nankai.edu.cn"]
+    }
+  ],
+  "document_suffixes":[".pdf", ".doc",".docx", ".xls", ".xlsx"],
+  "exclude_suffixes": [".zip", ".ppt", ".pptx", ".jpg", ".png", ".rar",".mp4",".mp3", ".avi", ".mkv", ".mov", ".flv", ".wmv", ".gif", ".txt"]
+}
+
+
