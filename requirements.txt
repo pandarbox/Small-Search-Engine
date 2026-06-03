@@ -1,0 +1,6 @@
+Flask
+jieba
+requests
+beautifulsoup4
+chardet
+ijson

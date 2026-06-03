@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x6821;&#x5185;&#x641c;&#x7d22;&#x5f15;&#x64ce;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<h1 id="校内搜索引擎">校内搜索引擎</h1>
+<p>这是一个基于 Python 和 Flask 的校内站点搜索引擎示例项目。项目包含站点爬取、网页快照保存、JSON 数据清洗/去重、倒排索引构建、向量空间检索、搜索联想、历史记录、用户注册登录和基于点击/偏好关键词的简单个性化排序。</p>
+<p>当前配置主要面向南开大学多个二级站点，站点入口和文件类型规则可在 <code>config.json</code> 中调整。</p>
+<h2 id="功能概览">功能概览</h2>
+<ul>
+<li>多站点并发爬取：从 <code>config.json</code> 中的入口 URL 开始，按域名白名单抓取页面。</li>
+<li>网页快照：爬取 HTML 页面时保存本地快照到 <code>html_snapshots/</code>。</li>
+<li>文档链接收集：识别 <code>.pdf</code>、<code>.doc</code>、<code>.docx</code>、<code>.xls</code>、<code>.xlsx</code> 等文档链接。</li>
+<li>数据预处理：提供清洗异常内容、去重和大 JSON 切分等工具脚本。</li>
+<li>倒排索引：使用 <code>jieba</code> 对中文分词，英文和数字按连续片段处理，生成倒排索引和文档元数据。</li>
+<li>搜索服务：Flask Web 页面支持普通关键词检索、文档检索、搜索联想和历史搜索。</li>
+<li>用户系统：支持注册、登录、登出，并可在注册时填写偏好关键词。</li>
+<li>个性化排序：已点击结果会优先展示，用户偏好关键词会对结果加权。</li>
+</ul>
+<p>说明：<code>app.py</code> 中已经定义了短语检索和通配检索函数，前端也有对应选项；但当前 <code>/search</code> 路由实际只接入了普通向量空间检索和 <code>type:document</code> 文档检索。如果需要完整启用短语/通配检索，需要在后端搜索分支中调用 <code>phrase_query()</code> 和 <code>wildcard_query()</code>。</p>
+<h2 id="项目结构">项目结构</h2>
+<pre><code class="language-text">.
+├── app.py                  # Flask 搜索服务入口
+├── build_index.py          # 根据 json_dedupe/ 构建倒排索引
+├── config.json             # 爬虫站点、白名单和文件类型配置
+├── requirements.txt        # Python 第三方依赖
+├── worm.py                 # 多站点爬虫
+├── templates/
+│   ├── login.html          # 登录页
+│   ├── register.html       # 注册页
+│   └── search.html         # 搜索页
+└── tool/
+    ├── clean.py            # 清理乱码/异常 HTML 记录
+    ├── unique.py           # JSON 内容去重
+    ├── qiefen.py           # 大 JSON 数组切分
+    └── countnumber.py      # 统计 JSON 记录数量
+</code></pre>
+<p>运行过程中会生成或依赖以下目录/文件：</p>
+<pre><code class="language-text">html_snapshots/             # 爬虫保存的网页快照
+json/                       # 爬虫原始 JSON 输出
+json_cleaned/               # clean.py 输出目录
+json_dedupe/                # uinque.py 输出目录，也是 build_index.py 的输入目录
+index_data/
+├── inverted_index.json     # 倒排索引
+└── doc_meta.json           # 文档元数据
+state/                      # 爬虫断点状态
+query.log                   # 查询日志
+click.log                   # 点击日志
+users.json                  # 用户数据
+stopwords.txt               # 停用词表，build_index.py 运行前需要准备
+</code></pre>
+<h2 id="环境准备">环境准备</h2>
+<p>通用环境可使用：</p>
+<pre><code class="language-bash">pip install -r requirements.txt
+</code></pre>
+<h2 id="运行流程">运行流程</h2>
+<h3 id="1-配置爬虫">1. 配置爬虫</h3>
+<p>编辑 <code>config.json</code>，确认 <code>sites</code> 中的 <code>start_url</code> 和 <code>domain_whitelist</code> 符合目标站点范围。</p>
+<p>可选配置项包括：</p>
+<ul>
+<li><code>document_suffixes</code>：识别为文档资源的后缀。</li>
+<li><code>exclude_suffixes</code>：爬虫跳过的文件后缀。</li>
+<li><code>max_workers</code>：并发爬取站点数量，默认 <code>10</code>。</li>
+<li><code>max_total</code>：全局最大爬取记录数，默认 <code>120000</code>。</li>
+<li><code>delay</code>：单站点请求间隔，默认 <code>0.5</code> 秒。</li>
+<li><code>snapshot_dir</code>、<code>state_dir</code>、<code>json_dir</code>：输出目录，未配置时分别默认为 <code>html_snapshots</code>、<code>state</code>、<code>json</code>。</li>
+</ul>
+<h3 id="2-爬取数据">2. 爬取数据</h3>
+<pre><code class="language-cmd">python worm.py
+</code></pre>
+<p>爬虫会将结果写入 <code>json/</code>，并将 HTML 快照写入 <code>html_snapshots/</code>。</p>
+<h3 id="3-清洗和去重">3. 清洗和去重</h3>
+<p>清理乱码或异常 HTML 记录：</p>
+<pre><code class="language-bat"><span class="hljs-built_in">cmd</span>.exe /c &quot;python tool\clean.py&quot;
+</code></pre>
+<p>去重：</p>
+<pre><code class="language-bat"><span class="hljs-built_in">cmd</span>.exe /c &quot;python tool\unique.py&quot;
+</code></pre>
+<h3 id="4-准备停用词表">4. 准备停用词表</h3>
+<p><code>build_index.py</code> 会读取项目根目录下的 <code>stopwords.txt</code>。运行索引构建前请先准备该文件，每行一个停用词</p>
+<h3 id="5-构建索引">5. 构建索引</h3>
+<pre><code class="language-bat">python build_index.py
+</code></pre>
+<p>索引构建完成后会生成：</p>
+<ul>
+<li><code>index_data/inverted_index.json</code></li>
+<li><code>index_data/doc_meta.json</code></li>
+</ul>
+<h3 id="6-启动搜索服务">6. 启动搜索服务</h3>
+<pre><code class="language-bat"><span class="hljs-built_in">cmd</span>.exe /c &quot;D:\miniconda3\envs\agent-py\python.exe app.py&quot;
+</code></pre>
+<p>默认监听地址：</p>
+<pre><code class="language-text">http://127.0.0.1:5000/search
+</code></pre>
+<p><code>app.py</code> 启动时会立即读取 <code>index_data/inverted_index.json</code> 和 <code>index_data/doc_meta.json</code>。如果索引文件不存在，服务会启动失败，需要先执行索引构建。</p>
+<h2 id="搜索说明">搜索说明</h2>
+<ul>
+<li>普通检索：直接输入中文或英文关键词。</li>
+<li>文档检索：前端选择“文档检索”后，会自动添加 <code>type:document</code> 前缀，只在文档类型记录中搜索。</li>
+<li>搜索联想：输入时调用 <code>/suggest?prefix=...</code>，从倒排索引词项中返回最多 5 个候选词。</li>
+<li>历史搜索：访问 <code>/history</code> 获取当前用户最近查询。</li>
+<li>点击记录：点击搜索结果时调用 <code>/click</code>，用于后续排序。</li>
+</ul>
+<h2 id="常见问题">常见问题</h2>
+<h3 id="启动-apppy-时报索引文件不存在">启动 <code>app.py</code> 时报索引文件不存在</h3>
+<p>先确认已经执行过：</p>
+<pre><code class="language-bat"><span class="hljs-built_in">cmd</span>.exe /c &quot;D:\miniconda3\envs\agent-py\python.exe build_index.py&quot;
+</code></pre>
+<p>并且 <code>index_data/</code> 下存在 <code>inverted_index.json</code> 和 <code>doc_meta.json</code>。</p>
+<h3 id="构建索引时报-stopwordstxt-不存在">构建索引时报 <code>stopwords.txt</code> 不存在</h3>
+<p>在项目根目录创建 <code>stopwords.txt</code>，每行写一个停用词。也可以修改 <code>build_index.py</code> 中的 <code>STOPWORDS_FILE</code> 指向已有停用词文件。</p>
+<h3 id="搜索结果为空">搜索结果为空</h3>
+<p>检查以下几点：</p>
+<ul>
+<li><code>json_dedupe/</code> 中是否有 JSON 数据。</li>
+<li><code>build_index.py</code> 是否成功生成索引。</li>
+<li>查询词是否被停用词过滤。</li>
+<li>文档检索只会匹配 <code>type</code> 为 <code>document</code> 的记录。</li>
+</ul>
+<h2 id="依赖">依赖</h2>
+<p>见 <code>requirements.txt</code>：</p>
+<pre><code class="language-text">Flask
+jieba
+requests
+beautifulsoup4
+chardet
+ijson
+</code></pre>
+
+            
+            
+        </body>
+        </html>
